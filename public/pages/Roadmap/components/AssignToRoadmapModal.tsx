@@ -96,7 +96,9 @@ export const AssignToRoadmapModal = (props: AssignToRoadmapModalProps) => {
           />
         </div>
         <div className="text-sm text-muted">
-          <Trans id="roadmap.modal.post.info">Post: <strong>{post.title}</strong></Trans>
+          <Trans id="roadmap.modal.post.info">
+            Post: <strong>{post.title}</strong>
+          </Trans>
         </div>
       </Modal.Content>
       <Modal.Footer>
