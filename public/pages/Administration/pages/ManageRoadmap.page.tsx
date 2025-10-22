@@ -6,7 +6,7 @@ import { Button, Input, Message, Modal, Toggle } from "@fider/components"
 import { roadmap } from "@fider/services"
 import { i18n } from "@lingui/core"
 import { Trans } from "@lingui/react/macro"
-import { AdminBasePage } from "../components/AdminBasePage"
+import { AdminPageContainer } from "../components/AdminBasePage"
 
 export interface ManageRoadmapPageState {
   columns: RoadmapColumn[]
@@ -102,16 +102,16 @@ const ManageRoadmapPage = () => {
 
   if (state.loading) {
     return (
-      <AdminBasePage>
+      <AdminPageContainer id="p-admin-roadmap" name="roadmap" title={i18n._({ id: "admin.roadmap.title", message: "Manage Roadmap" })} subtitle={i18n._({ id: "admin.roadmap.description", message: "Configure roadmap columns and their visibility settings." })}>
         <div className="text-center p-8">
           <Trans id="admin.roadmap.loading">Loading roadmap columns...</Trans>
         </div>
-      </AdminBasePage>
+      </AdminPageContainer>
     )
   }
 
   return (
-    <AdminBasePage>
+    <AdminPageContainer id="p-admin-roadmap" name="roadmap" title={i18n._({ id: "admin.roadmap.title", message: "Manage Roadmap" })} subtitle={i18n._({ id: "admin.roadmap.description", message: "Configure roadmap columns and their visibility settings." })}>
       <div className="p-admin-roadmap">
         <div className="p-admin-roadmap__header mb-6">
           <h1 className="text-2xl font-bold">
@@ -223,7 +223,7 @@ const ManageRoadmapPage = () => {
           />
         )}
       </div>
-    </AdminBasePage>
+    </AdminPageContainer>
   )
 }
 

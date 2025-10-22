@@ -9,7 +9,7 @@ import (
 func RoadmapPage() web.HandlerFunc {
 	return func(c *web.Context) error {
 		return c.Page(http.StatusOK, web.Props{
-			Page:  "Roadmap.page",
+			Page:  "Roadmap/Roadmap.page",
 			Title: "Roadmap",
 		})
 	}
