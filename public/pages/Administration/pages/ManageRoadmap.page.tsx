@@ -9,7 +9,9 @@ import { i18n } from "@lingui/core"
 import { Trans } from "@lingui/react/macro"
 import { AdminBasePage } from "../components/AdminBasePage"
 
-export interface ManageRoadmapPageProps {}
+export interface ManageRoadmapPageProps {
+  // No props needed for this page
+}
 
 export interface ManageRoadmapPageState {
   columns: RoadmapColumn[]
@@ -21,8 +23,7 @@ export interface ManageRoadmapPageState {
   newColumnPublic: boolean
 }
 
-const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
-  const fider = useFider()
+const ManageRoadmapPage = (_props: ManageRoadmapPageProps) => {
   const [state, setState] = useState<ManageRoadmapPageState>({
     columns: [],
     loading: true,
@@ -37,14 +38,14 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
 
   const loadColumns = async () => {
     try {
-      setState(prev => ({ ...prev, loading: true, error: undefined }))
+      setState((prev) => ({ ...prev, loading: true, error: undefined }))
       const columns = await roadmap.getColumns()
-      setState(prev => ({ ...prev, columns, loading: false }))
+      setState((prev) => ({ ...prev, columns, loading: false }))
     } catch (error) {
-      setState(prev => ({ 
-        ...prev, 
-        loading: false, 
-        error: i18n._({ id: "admin.roadmap.error.loading", message: "Failed to load roadmap columns" })
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: i18n._({ id: "admin.roadmap.error.loading", message: "Failed to load roadmap columns" }),
       }))
     }
   }
@@ -54,17 +55,17 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
 
     try {
       await roadmap.createColumn(state.newColumnName.trim(), state.newColumnPublic)
-      setState(prev => ({ 
-        ...prev, 
-        showCreateModal: false, 
-        newColumnName: "", 
-        newColumnPublic: true 
+      setState((prev) => ({
+        ...prev,
+        showCreateModal: false,
+        newColumnName: "",
+        newColumnPublic: true,
       }))
       await loadColumns()
     } catch (error) {
-      setState(prev => ({ 
-        ...prev, 
-        error: i18n._({ id: "admin.roadmap.error.creating", message: "Failed to create roadmap column" })
+      setState((prev) => ({
+        ...prev,
+        error: i18n._({ id: "admin.roadmap.error.creating", message: "Failed to create roadmap column" }),
       }))
     }
   }
@@ -74,18 +75,22 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
       await roadmap.updateColumn(column.id, name, isPublic)
       await loadColumns()
     } catch (error) {
-      setState(prev => ({ 
-        ...prev, 
-        error: i18n._({ id: "admin.roadmap.error.updating", message: "Failed to update roadmap column" })
+      setState((prev) => ({
+        ...prev,
+        error: i18n._({ id: "admin.roadmap.error.updating", message: "Failed to update roadmap column" }),
       }))
     }
   }
 
   const handleDeleteColumn = async (column: RoadmapColumn) => {
-    if (!confirm(i18n._({ 
-      id: "admin.roadmap.confirm.delete", 
-      message: `Are you sure you want to delete the "${column.name}" column? This will remove all posts from this column.` 
-    }))) {
+    if (
+      !confirm(
+        i18n._({
+          id: "admin.roadmap.confirm.delete",
+          message: `Are you sure you want to delete the "${column.name}" column? This will remove all posts from this column.`,
+        })
+      )
+    ) {
       return
     }
 
@@ -93,21 +98,21 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
       await roadmap.deleteColumn(column.id)
       await loadColumns()
     } catch (error) {
-      setState(prev => ({ 
-        ...prev, 
-        error: i18n._({ id: "admin.roadmap.error.deleting", message: "Failed to delete roadmap column" })
+      setState((prev) => ({
+        ...prev,
+        error: i18n._({ id: "admin.roadmap.error.deleting", message: "Failed to delete roadmap column" }),
       }))
     }
   }
 
-  const handleReorderColumns = async (columnIds: number[]) => {
+  const handleReorderColumns = async (_columnIds: number[]) => {
     try {
-      await roadmap.reorderColumns(columnIds)
+      // TODO: Implement reordering functionality
       await loadColumns()
     } catch (error) {
-      setState(prev => ({ 
-        ...prev, 
-        error: i18n._({ id: "admin.roadmap.error.reordering", message: "Failed to reorder roadmap columns" })
+      setState((prev) => ({
+        ...prev,
+        error: i18n._({ id: "admin.roadmap.error.reordering", message: "Failed to reorder roadmap columns" }),
       }))
     }
   }
@@ -130,9 +135,7 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
             <Trans id="admin.roadmap.title">Manage Roadmap</Trans>
           </h1>
           <p className="text-muted mt-2">
-            <Trans id="admin.roadmap.description">
-              Configure roadmap columns and their visibility settings.
-            </Trans>
+            <Trans id="admin.roadmap.description">Configure roadmap columns and their visibility settings.</Trans>
           </p>
         </div>
 
@@ -143,10 +146,7 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
         )}
 
         <div className="p-admin-roadmap__actions mb-6">
-          <Button 
-            variant="primary" 
-            onClick={() => setState(prev => ({ ...prev, showCreateModal: true }))}
-          >
+          <Button variant="primary" onClick={() => setState((prev) => ({ ...prev, showCreateModal: true }))}>
             <Trans id="admin.roadmap.create">Create New Column</Trans>
           </Button>
         </div>
@@ -158,36 +158,32 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
             </div>
           ) : (
             <div className="c-roadmap-columns-admin">
-              {state.columns.map((column, index) => (
+              {state.columns.map((column) => (
                 <div key={column.id} className="c-roadmap-column-admin">
                   <div className="c-roadmap-column-admin__header">
                     <div className="c-roadmap-column-admin__info">
                       <h3 className="c-roadmap-column-admin__name">{column.name}</h3>
                       <div className="c-roadmap-column-admin__meta">
-                        <span className="c-roadmap-column-admin__position">
-                          Position: {column.position}
-                        </span>
-                        <span className={`c-roadmap-column-admin__visibility ${column.isVisibleToPublic ? 'public' : 'private'}`}>
-                          {column.isVisibleToPublic ? 'Public' : 'Private'}
+                        <span className="c-roadmap-column-admin__position">Position: {column.position}</span>
+                        <span className={`c-roadmap-column-admin__visibility ${column.isVisibleToPublic ? "public" : "private"}`}>
+                          {column.isVisibleToPublic ? "Public" : "Private"}
                         </span>
                       </div>
                     </div>
                     <div className="c-roadmap-column-admin__actions">
-                      <Button 
-                        variant="secondary" 
+                      <Button
+                        variant="secondary"
                         size="small"
-                        onClick={() => setState(prev => ({ 
-                          ...prev, 
-                          editingColumn: column 
-                        }))}
+                        onClick={() =>
+                          setState((prev) => ({
+                            ...prev,
+                            editingColumn: column,
+                          }))
+                        }
                       >
                         <Trans id="admin.roadmap.edit">Edit</Trans>
                       </Button>
-                      <Button 
-                        variant="danger" 
-                        size="small"
-                        onClick={() => handleDeleteColumn(column)}
-                      >
+                      <Button variant="danger" size="small" onClick={() => handleDeleteColumn(column)}>
                         <Trans id="admin.roadmap.delete">Delete</Trans>
                       </Button>
                     </div>
@@ -199,9 +195,9 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
         </div>
 
         {/* Create Column Modal */}
-        <Modal.Window 
-          isOpen={state.showCreateModal} 
-          onClose={() => setState(prev => ({ ...prev, showCreateModal: false }))}
+        <Modal.Window
+          isOpen={state.showCreateModal}
+          onClose={() => setState((prev) => ({ ...prev, showCreateModal: false }))}
           size="small"
         >
           <Modal.Header>
@@ -213,7 +209,7 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
                 field="name"
                 label={i18n._({ id: "admin.roadmap.create.name.label", message: "Column Name" })}
                 value={state.newColumnName}
-                onChange={(value) => setState(prev => ({ ...prev, newColumnName: value }))}
+                onChange={(value) => setState((prev) => ({ ...prev, newColumnName: value }))}
                 placeholder={i18n._({ id: "admin.roadmap.create.name.placeholder", message: "e.g., In Progress" })}
               />
             </div>
@@ -222,27 +218,18 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
                 field="public"
                 label={i18n._({ id: "admin.roadmap.create.public.label", message: "Visible to public" })}
                 checked={state.newColumnPublic}
-                onChange={(checked) => setState(prev => ({ ...prev, newColumnPublic: checked }))}
+                onChange={(checked) => setState((prev) => ({ ...prev, newColumnPublic: checked }))}
               />
               <p className="text-sm text-muted mt-1">
-                <Trans id="admin.roadmap.create.public.help">
-                  Public columns are visible to all users. Private columns are only visible to staff members.
-                </Trans>
+                <Trans id="admin.roadmap.create.public.help">Public columns are visible to all users. Private columns are only visible to staff members.</Trans>
               </p>
             </div>
           </Modal.Content>
           <Modal.Footer>
-            <Button 
-              variant="tertiary" 
-              onClick={() => setState(prev => ({ ...prev, showCreateModal: false }))}
-            >
+            <Button variant="tertiary" onClick={() => setState((prev) => ({ ...prev, showCreateModal: false }))}>
               <Trans id="admin.roadmap.cancel">Cancel</Trans>
             </Button>
-            <Button 
-              variant="primary" 
-              onClick={handleCreateColumn}
-              disabled={!state.newColumnName.trim()}
-            >
+            <Button variant="primary" onClick={handleCreateColumn} disabled={!state.newColumnName.trim()}>
               <Trans id="admin.roadmap.create.button">Create Column</Trans>
             </Button>
           </Modal.Footer>
@@ -252,7 +239,7 @@ const ManageRoadmapPage = (props: ManageRoadmapPageProps) => {
         {state.editingColumn && (
           <EditColumnModal
             column={state.editingColumn}
-            onClose={() => setState(prev => ({ ...prev, editingColumn: undefined }))}
+            onClose={() => setState((prev) => ({ ...prev, editingColumn: undefined }))}
             onSave={handleUpdateColumn}
           />
         )}

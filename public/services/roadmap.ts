@@ -1,5 +1,5 @@
 import { httpClient } from "@fider/services"
-import { RoadmapData, RoadmapColumn, RoadmapAssignment } from "@fider/models"
+import { RoadmapData, RoadmapColumn } from "@fider/models"
 
 export const roadmap = {
   async getRoadmap(): Promise<RoadmapData> {

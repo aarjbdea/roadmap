@@ -15,7 +15,7 @@ interface RoadmapPostCardProps {
 }
 
 export const RoadmapPostCard = (props: RoadmapPostCardProps) => {
-  const { post, isStaff, onMoved, onRemoved } = props
+  const { post, isStaff, onRemoved } = props
 
   const handleClick = () => {
     navigator.goTo(`/posts/${post.number}/${post.slug}`)
@@ -27,18 +27,18 @@ export const RoadmapPostCard = (props: RoadmapPostCardProps) => {
   }
 
   return (
-    <div 
-      className={`c-roadmap-post-card ${isStaff ? 'c-roadmap-post-card--draggable' : ''}`}
+    <div
+      className={`c-roadmap-post-card ${isStaff ? "c-roadmap-post-card--draggable" : ""}`}
       onClick={handleClick}
     >
       <div className="c-roadmap-post-card__header">
         <h4 className="c-roadmap-post-card__title">{post.title}</h4>
         {isStaff && (
-          <button 
-            className="c-roadmap-post-card__remove"
-            onClick={handleRemove}
-            title="Remove from roadmap"
-          >
+        <button
+          className="c-roadmap-post-card__remove"
+          onClick={handleRemove}
+          title="Remove from roadmap"
+        >
             ×
           </button>
         )}
@@ -59,18 +59,14 @@ export const RoadmapPostCard = (props: RoadmapPostCardProps) => {
           <ShowPostStatus status={post.status} />
         </div>
         
-        {post.tags && post.tags.length > 0 && (
-          <div className="c-roadmap-post-card__tags">
-            {post.tags.slice(0, 2).map((tag) => (
-              <ShowTag key={tag} tag={tag} />
-            ))}
-            {post.tags.length > 2 && (
-              <span className="c-roadmap-post-card__more-tags">
-                +{post.tags.length - 2}
-              </span>
-            )}
-          </div>
-        )}
+      {post.tags && post.tags.length > 0 && (
+        <div className="c-roadmap-post-card__tags">
+          {post.tags.slice(0, 2).map((tag) => (
+            <ShowTag key={tag} tag={tag} />
+          ))}
+          {post.tags.length > 2 && <span className="c-roadmap-post-card__more-tags">+{post.tags.length - 2}</span>}
+        </div>
+      )}
       </div>
     </div>
   )
