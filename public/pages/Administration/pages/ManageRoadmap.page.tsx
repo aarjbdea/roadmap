@@ -102,7 +102,12 @@ const ManageRoadmapPage = () => {
 
   if (state.loading) {
     return (
-      <AdminPageContainer id="p-admin-roadmap" name="roadmap" title={i18n._({ id: "admin.roadmap.title", message: "Manage Roadmap" })} subtitle={i18n._({ id: "admin.roadmap.description", message: "Configure roadmap columns and their visibility settings." })}>
+      <AdminPageContainer
+        id="p-admin-roadmap"
+        name="roadmap"
+        title={i18n._({ id: "admin.roadmap.title", message: "Manage Roadmap" })}
+        subtitle={i18n._({ id: "admin.roadmap.description", message: "Configure roadmap columns and their visibility settings." })}
+      >
         <div className="text-center p-8">
           <Trans id="admin.roadmap.loading">Loading roadmap columns...</Trans>
         </div>
@@ -111,7 +116,12 @@ const ManageRoadmapPage = () => {
   }
 
   return (
-    <AdminPageContainer id="p-admin-roadmap" name="roadmap" title={i18n._({ id: "admin.roadmap.title", message: "Manage Roadmap" })} subtitle={i18n._({ id: "admin.roadmap.description", message: "Configure roadmap columns and their visibility settings." })}>
+    <AdminPageContainer
+      id="p-admin-roadmap"
+      name="roadmap"
+      title={i18n._({ id: "admin.roadmap.title", message: "Manage Roadmap" })}
+      subtitle={i18n._({ id: "admin.roadmap.description", message: "Configure roadmap columns and their visibility settings." })}
+    >
       <div className="p-admin-roadmap">
         <div className="p-admin-roadmap__header mb-6">
           <h1 className="text-2xl font-bold">
