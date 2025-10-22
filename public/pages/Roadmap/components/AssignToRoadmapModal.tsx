@@ -83,9 +83,7 @@ export const AssignToRoadmapModal = (props: AssignToRoadmapModalProps) => {
         )}
         <div className="mb-4">
           <p className="text-sm text-muted mb-2">
-            <Trans id="roadmap.modal.description">
-              Choose which roadmap column this post should be assigned to.
-            </Trans>
+            <Trans id="roadmap.modal.description">Choose which roadmap column this post should be assigned to.</Trans>
           </p>
           <Select
             field="column"

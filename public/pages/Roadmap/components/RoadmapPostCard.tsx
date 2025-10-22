@@ -37,9 +37,7 @@ export const RoadmapPostCard = (props: RoadmapPostCardProps) => {
         )}
       </div>
       <div className="c-roadmap-post-card__content">
-        <p className="c-roadmap-post-card__description">
-          {post.description.length > 100 ? `${post.description.substring(0, 100)}...` : post.description}
-        </p>
+        <p className="c-roadmap-post-card__description">{post.description.length > 100 ? `${post.description.substring(0, 100)}...` : post.description}</p>
       </div>
       <div className="c-roadmap-post-card__footer">
         <div className="c-roadmap-post-card__meta">
