@@ -68,7 +68,7 @@ const RoadmapPage = () => {
     return <Message type="error">{state.error}</Message>
   }
 
-  if (!state.roadmapData || state.roadmapData.columns.length === 0) {
+  if (!state.roadmapData || !state.roadmapData.columns || state.roadmapData.columns.length === 0) {
     return (
       <div className="text-center p-8">
         <Message type="warning">

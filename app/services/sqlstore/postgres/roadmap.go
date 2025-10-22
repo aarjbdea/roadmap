@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/getfider/fider/app/actions"
 	"github.com/getfider/fider/app/models/cmd"
 	"github.com/getfider/fider/app/models/entity"
 	"github.com/getfider/fider/app/models/query"
 	"github.com/getfider/fider/app/pkg/bus"
 	"github.com/getfider/fider/app/pkg/dbx"
+	"github.com/getfider/fider/app/pkg/slug"
 )
 
 type dbRoadmapColumn struct {
@@ -333,11 +335,106 @@ func GetMaxRoadmapColumnPosition(ctx context.Context, q *query.GetMaxRoadmapColu
 	})
 }
 
+// Action handlers that convert actions to commands
+
+func handleCreateRoadmapColumnAction(ctx context.Context, action *actions.CreateRoadmapColumn) error {
+	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
+		// Get the next position
+		getMaxPos := &query.GetMaxRoadmapColumnPosition{
+			TenantID: tenant.ID,
+			Result:   new(int),
+		}
+		if err := GetMaxRoadmapColumnPosition(ctx, getMaxPos); err != nil {
+			return err
+		}
+
+		// Generate slug from name
+		slug := slug.Make(action.Name)
+
+		// Create the command
+		createCmd := &cmd.CreateRoadmapColumn{
+			TenantID:          tenant.ID,
+			Name:              action.Name,
+			Slug:              slug,
+			Position:          *getMaxPos.Result + 1,
+			IsVisibleToPublic: action.IsVisibleToPublic,
+			CreatedByID:       user.ID,
+		}
+
+		return CreateRoadmapColumn(ctx, createCmd)
+	})
+}
+
+func handleUpdateRoadmapColumnAction(ctx context.Context, action *actions.UpdateRoadmapColumn) error {
+	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
+		updateCmd := &cmd.UpdateRoadmapColumn{
+			ColumnID:          action.ColumnID,
+			Name:              action.Name,
+			IsVisibleToPublic: action.IsVisibleToPublic,
+			UpdatedByID:       user.ID,
+		}
+
+		return UpdateRoadmapColumn(ctx, updateCmd)
+	})
+}
+
+func handleDeleteRoadmapColumnAction(ctx context.Context, action *actions.DeleteRoadmapColumn) error {
+	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
+		deleteCmd := &cmd.DeleteRoadmapColumn{
+			ColumnID:    action.ColumnID,
+			TenantID:    tenant.ID,
+			DeletedByID: user.ID,
+		}
+
+		return DeleteRoadmapColumn(ctx, deleteCmd)
+	})
+}
+
+func handleReorderRoadmapColumnsAction(ctx context.Context, action *actions.ReorderRoadmapColumns) error {
+	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
+		reorderCmd := &cmd.ReorderRoadmapColumns{
+			TenantID:    tenant.ID,
+			ColumnIDs:   action.ColumnIDs,
+			UpdatedByID: user.ID,
+		}
+
+		return ReorderRoadmapColumns(ctx, reorderCmd)
+	})
+}
+
+func handleAssignPostToRoadmapAction(ctx context.Context, action *actions.AssignPostToRoadmap) error {
+	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
+		assignCmd := &cmd.AssignPostToColumn{
+			PostID:       action.PostID,
+			ColumnID:     action.ColumnID,
+			Position:     action.Position,
+			AssignedByID: user.ID,
+		}
+
+		return AssignPostToColumn(ctx, assignCmd)
+	})
+}
+
+func handleReorderPostInRoadmapAction(ctx context.Context, action *actions.ReorderPostInRoadmap) error {
+	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
+		reorderCmd := &cmd.ReorderPostInColumn{
+			PostID:      action.PostID,
+			NewPosition: action.NewPosition,
+			UpdatedByID: user.ID,
+		}
+
+		return ReorderPostInColumn(ctx, reorderCmd)
+	})
+}
+
 func init() {
+	// Query handlers
 	bus.AddHandler(GetRoadmapColumns)
 	bus.AddHandler(GetRoadmapData)
 	bus.AddHandler(GetPostRoadmapAssignment)
 	bus.AddHandler(GetMaxRoadmapColumnPosition)
+	
+	// Command handlers
 	bus.AddHandler(AssignPostToColumn)
 	bus.AddHandler(RemovePostFromRoadmap)
 	bus.AddHandler(ReorderPostInColumn)
@@ -345,4 +442,12 @@ func init() {
 	bus.AddHandler(UpdateRoadmapColumn)
 	bus.AddHandler(DeleteRoadmapColumn)
 	bus.AddHandler(ReorderRoadmapColumns)
+	
+	// Action handlers
+	bus.AddHandler(handleCreateRoadmapColumnAction)
+	bus.AddHandler(handleUpdateRoadmapColumnAction)
+	bus.AddHandler(handleDeleteRoadmapColumnAction)
+	bus.AddHandler(handleReorderRoadmapColumnsAction)
+	bus.AddHandler(handleAssignPostToRoadmapAction)
+	bus.AddHandler(handleReorderPostInRoadmapAction)
 }
