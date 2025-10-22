@@ -287,7 +287,7 @@ export const ShareFeedback: React.FC<ShareFeedbackProps> = (props) => {
           </div>
         ) : (
           /* For authenticated users, only show the submit button container when title is long enough */
-          title.replace(/\s+/g, " ").trim().length > 9 && (
+          title.replace(/\s+/g, " ").trim().length > 3 && (
             <div className="c-share-feedback__content animate-fade-in">
               <div className="c-share-feedback-signin">
                 <div className="flex justify-center">
