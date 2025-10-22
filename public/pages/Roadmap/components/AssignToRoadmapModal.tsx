@@ -101,7 +101,6 @@ export const AssignToRoadmapModal = (props: AssignToRoadmapModalProps) => {
             options={columnOptions}
             defaultValue={selectedColumnId > 0 ? selectedColumnId.toString() : undefined}
             onChange={(option: SelectOption | undefined) => setSelectedColumnId(option ? parseInt(option.value) : 0)}
-            placeholder={i18n._({ id: "roadmap.modal.column.placeholder", message: "Select a column..." })}
           />
         </div>
 
