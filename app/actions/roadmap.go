@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"context"
+
 	"github.com/getfider/fider/app/models/entity"
 	"github.com/getfider/fider/app/pkg/validate"
 )
@@ -13,12 +15,12 @@ type AssignPostToRoadmap struct {
 }
 
 // IsAuthorized returns true if current user is authorized to perform this action
-func (a *AssignPostToRoadmap) IsAuthorized(user *entity.User, tenant *entity.Tenant) bool {
+func (a *AssignPostToRoadmap) IsAuthorized(ctx context.Context, user *entity.User) bool {
 	return user != nil && user.IsCollaborator()
 }
 
 // Validate if current model is valid
-func (a *AssignPostToRoadmap) Validate(user *entity.User, tenant *entity.Tenant) *validate.Result {
+func (a *AssignPostToRoadmap) Validate(ctx context.Context, user *entity.User) *validate.Result {
 	result := validate.Success()
 
 	if a.PostID <= 0 {
@@ -42,12 +44,12 @@ type RemovePostFromRoadmap struct {
 }
 
 // IsAuthorized returns true if current user is authorized to perform this action
-func (a *RemovePostFromRoadmap) IsAuthorized(user *entity.User, tenant *entity.Tenant) bool {
+func (a *RemovePostFromRoadmap) IsAuthorized(ctx context.Context, user *entity.User) bool {
 	return user != nil && user.IsCollaborator()
 }
 
 // Validate if current model is valid
-func (a *RemovePostFromRoadmap) Validate(user *entity.User, tenant *entity.Tenant) *validate.Result {
+func (a *RemovePostFromRoadmap) Validate(ctx context.Context, user *entity.User) *validate.Result {
 	result := validate.Success()
 
 	if a.PostID <= 0 {
@@ -64,12 +66,12 @@ type ReorderPostInRoadmap struct {
 }
 
 // IsAuthorized returns true if current user is authorized to perform this action
-func (a *ReorderPostInRoadmap) IsAuthorized(user *entity.User, tenant *entity.Tenant) bool {
+func (a *ReorderPostInRoadmap) IsAuthorized(ctx context.Context, user *entity.User) bool {
 	return user != nil && user.IsCollaborator()
 }
 
 // Validate if current model is valid
-func (a *ReorderPostInRoadmap) Validate(user *entity.User, tenant *entity.Tenant) *validate.Result {
+func (a *ReorderPostInRoadmap) Validate(ctx context.Context, user *entity.User) *validate.Result {
 	result := validate.Success()
 
 	if a.PostID <= 0 {
@@ -90,12 +92,12 @@ type CreateRoadmapColumn struct {
 }
 
 // IsAuthorized returns true if current user is authorized to perform this action
-func (a *CreateRoadmapColumn) IsAuthorized(user *entity.User, tenant *entity.Tenant) bool {
+func (a *CreateRoadmapColumn) IsAuthorized(ctx context.Context, user *entity.User) bool {
 	return user != nil && user.IsAdministrator()
 }
 
 // Validate if current model is valid
-func (a *CreateRoadmapColumn) Validate(user *entity.User, tenant *entity.Tenant) *validate.Result {
+func (a *CreateRoadmapColumn) Validate(ctx context.Context, user *entity.User) *validate.Result {
 	result := validate.Success()
 
 	if a.Name == "" {
@@ -115,12 +117,12 @@ type UpdateRoadmapColumn struct {
 }
 
 // IsAuthorized returns true if current user is authorized to perform this action
-func (a *UpdateRoadmapColumn) IsAuthorized(user *entity.User, tenant *entity.Tenant) bool {
+func (a *UpdateRoadmapColumn) IsAuthorized(ctx context.Context, user *entity.User) bool {
 	return user != nil && user.IsAdministrator()
 }
 
 // Validate if current model is valid
-func (a *UpdateRoadmapColumn) Validate(user *entity.User, tenant *entity.Tenant) *validate.Result {
+func (a *UpdateRoadmapColumn) Validate(ctx context.Context, user *entity.User) *validate.Result {
 	result := validate.Success()
 
 	if a.ColumnID <= 0 {
@@ -142,12 +144,12 @@ type DeleteRoadmapColumn struct {
 }
 
 // IsAuthorized returns true if current user is authorized to perform this action
-func (a *DeleteRoadmapColumn) IsAuthorized(user *entity.User, tenant *entity.Tenant) bool {
+func (a *DeleteRoadmapColumn) IsAuthorized(ctx context.Context, user *entity.User) bool {
 	return user != nil && user.IsAdministrator()
 }
 
 // Validate if current model is valid
-func (a *DeleteRoadmapColumn) Validate(user *entity.User, tenant *entity.Tenant) *validate.Result {
+func (a *DeleteRoadmapColumn) Validate(ctx context.Context, user *entity.User) *validate.Result {
 	result := validate.Success()
 
 	if a.ColumnID <= 0 {
@@ -163,12 +165,12 @@ type ReorderRoadmapColumns struct {
 }
 
 // IsAuthorized returns true if current user is authorized to perform this action
-func (a *ReorderRoadmapColumns) IsAuthorized(user *entity.User, tenant *entity.Tenant) bool {
+func (a *ReorderRoadmapColumns) IsAuthorized(ctx context.Context, user *entity.User) bool {
 	return user != nil && user.IsAdministrator()
 }
 
 // Validate if current model is valid
-func (a *ReorderRoadmapColumns) Validate(user *entity.User, tenant *entity.Tenant) *validate.Result {
+func (a *ReorderRoadmapColumns) Validate(ctx context.Context, user *entity.User) *validate.Result {
 	result := validate.Success()
 
 	if len(a.ColumnIDs) == 0 {
