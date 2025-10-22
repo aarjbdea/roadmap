@@ -52,6 +52,6 @@ export const roadmap = {
   },
 
   async reorderColumns(columnIds: number[]): Promise<void> {
-    await http.put("/api/v1/admin/roadmap/columns/reorder", columnIds)
+    await http.put("/api/v1/admin/roadmap/reorder-columns", columnIds)
   },
 }
