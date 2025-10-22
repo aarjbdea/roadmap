@@ -204,8 +204,8 @@ const ManageRoadmapPage = (_props: ManageRoadmapPageProps) => {
               <Toggle
                 field="public"
                 label={i18n._({ id: "admin.roadmap.create.public.label", message: "Visible to public" })}
-                defaultValue={state.newColumnPublic}
-                onChange={(value) => setState((prev) => ({ ...prev, newColumnPublic: value }))}
+                active={state.newColumnPublic}
+                onToggle={(checked: boolean) => setState((prev) => ({ ...prev, newColumnPublic: checked }))}
               />
               <p className="text-sm text-muted mt-1">
                 <Trans id="admin.roadmap.create.public.help">Public columns are visible to all users. Private columns are only visible to staff members.</Trans>
@@ -269,8 +269,8 @@ const EditColumnModal = (props: EditColumnModalProps) => {
           <Toggle
             field="public"
             label={i18n._({ id: "admin.roadmap.edit.public.label", message: "Visible to public" })}
-            defaultValue={isPublic}
-            onChange={setIsPublic}
+            active={isPublic}
+            onToggle={(checked: boolean) => setIsPublic(checked)}
           />
         </div>
       </Modal.Content>

@@ -3,7 +3,7 @@ import { RoadmapData, RoadmapColumn } from "@fider/models"
 
 export const roadmap = {
   async getRoadmap(): Promise<RoadmapData> {
-    const response = await http.get("/api/v1/roadmap")
+    const response = await http.get<RoadmapData>("/api/v1/roadmap")
     return response.data
   },
 
@@ -27,12 +27,12 @@ export const roadmap = {
   },
 
   async getColumns(): Promise<RoadmapColumn[]> {
-    const response = await http.get("/api/v1/admin/roadmap/columns")
+    const response = await http.get<RoadmapColumn[]>("/api/v1/admin/roadmap/columns")
     return response.data
   },
 
   async createColumn(name: string, isVisibleToPublic: boolean): Promise<RoadmapColumn> {
-    const response = await http.post("/api/v1/admin/roadmap/columns", {
+    const response = await http.post<RoadmapColumn>("/api/v1/admin/roadmap/columns", {
       name,
       isVisibleToPublic,
     })
@@ -40,7 +40,7 @@ export const roadmap = {
   },
 
   async updateColumn(id: number, name: string, isVisibleToPublic: boolean): Promise<RoadmapColumn> {
-    const response = await http.put(`/api/v1/admin/roadmap/columns/${id}`, {
+    const response = await http.put<RoadmapColumn>(`/api/v1/admin/roadmap/columns/${id}`, {
       name,
       isVisibleToPublic,
     })

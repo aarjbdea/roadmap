@@ -99,7 +99,7 @@ export const AssignToRoadmapModal = (props: AssignToRoadmapModalProps) => {
             field="column"
             label={i18n._({ id: "roadmap.modal.column.label", message: "Roadmap Column" })}
             options={columnOptions}
-            value={selectedColumnId > 0 ? selectedColumnId.toString() : undefined}
+            defaultValue={selectedColumnId > 0 ? selectedColumnId.toString() : undefined}
             onChange={(option: SelectOption | undefined) => setSelectedColumnId(option ? parseInt(option.value) : 0)}
             placeholder={i18n._({ id: "roadmap.modal.column.placeholder", message: "Select a column..." })}
           />

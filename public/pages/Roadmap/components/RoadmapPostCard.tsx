@@ -61,8 +61,8 @@ export const RoadmapPostCard = (props: RoadmapPostCardProps) => {
         
       {post.tags && post.tags.length > 0 && (
         <div className="c-roadmap-post-card__tags">
-          {post.tags.slice(0, 2).map((tagSlug: string) => (
-            <ShowTag key={tagSlug} tag={{ name: tagSlug, slug: tagSlug, color: "" }} />
+          {post.tags.slice(0, 2).map((tagSlug: string, index: number) => (
+            <ShowTag key={tagSlug} tag={{ id: index, name: tagSlug, slug: tagSlug, color: "", isPublic: true }} />
           ))}
           {post.tags.length > 2 && <span className="c-roadmap-post-card__more-tags">+{post.tags.length - 2}</span>}
         </div>
