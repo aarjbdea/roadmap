@@ -2,7 +2,7 @@ import "./Roadmap.page.scss"
 
 import React, { useEffect, useState } from "react"
 import { RoadmapData } from "@fider/models"
-import { Loader, Message } from "@fider/components"
+import { Loader, Message, Header } from "@fider/components"
 import { roadmap } from "@fider/services"
 import { useFider } from "@fider/hooks"
 import { RoadmapColumn as RoadmapColumnComponent } from "./components/RoadmapColumn"
@@ -81,26 +81,29 @@ const RoadmapPage = () => {
   const isStaff = fider.session.isAuthenticated && fider.session.user.isCollaborator
 
   return (
-    <div id="p-roadmap" className="page">
-      <div className="container">
-        <div className="p-roadmap__header mb-6">
-          <h1 className="text-2xl font-bold">
-            <Trans id="roadmap.title">Roadmap</Trans>
-          </h1>
-          <p className="text-muted mt-2">
-            <Trans id="roadmap.description">Track the progress of feature requests and see what&apos;s coming next.</Trans>
-          </p>
-        </div>
+    <>
+      <Header />
+      <div id="p-roadmap" className="page">
+        <div className="container">
+          <div className="p-roadmap__header mb-6">
+            <h1 className="text-2xl font-bold">
+              <Trans id="roadmap.title">Roadmap</Trans>
+            </h1>
+            <p className="text-muted mt-2">
+              <Trans id="roadmap.description">Track the progress of feature requests and see what&apos;s coming next.</Trans>
+            </p>
+          </div>
 
-        <div className="p-roadmap__columns">
-          <div className="c-roadmap-columns">
-            {state.roadmapData.columns.map((column) => (
-              <RoadmapColumnComponent key={column.id} column={column} isStaff={isStaff} onPostMoved={handlePostMoved} onPostRemoved={handlePostRemoved} />
-            ))}
+          <div className="p-roadmap__columns">
+            <div className="c-roadmap-columns">
+              {state.roadmapData.columns.map((column) => (
+                <RoadmapColumnComponent key={column.id} column={column} isStaff={isStaff} onPostMoved={handlePostMoved} onPostRemoved={handlePostRemoved} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

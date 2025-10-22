@@ -91,19 +91,19 @@ func GetRoadmapColumns(ctx context.Context, q *query.GetRoadmapColumns) error {
 // GetRoadmapData returns roadmap columns with their assigned posts
 func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
-		// First get all columns
+		// Get all columns
 		dbColumns := make([]*dbRoadmapColumn, 0)
-		query := `
+		columnQuery := `
 			SELECT id, tenant_id, name, slug, position, is_visible_to_public, created_at
 			FROM roadmap_columns
 			WHERE tenant_id = $1
 		`
 		if !q.IncludePrivate {
-			query += " AND is_visible_to_public = true"
+			columnQuery += " AND is_visible_to_public = true"
 		}
-		query += " ORDER BY position ASC"
+		columnQuery += " ORDER BY position ASC"
 		
-		err := trx.Select(&dbColumns, query, tenant.ID)
+		err := trx.Select(&dbColumns, columnQuery, tenant.ID)
 		if err != nil {
 			return err
 		}
@@ -111,43 +111,39 @@ func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 		columns := make([]*entity.RoadmapColumn, len(dbColumns))
 		for i, dbCol := range dbColumns {
 			columns[i] = dbCol.toModel()
+			columns[i].Posts = make([]*entity.Post, 0)
 		}
 
 		// Get posts for each column
 		for _, column := range columns {
-			dbPosts := make([]*dbPost, 0)
-			hasVotedSubQuery := "null"
-			if user != nil {
-				hasVotedSubQuery = fmt.Sprintf("(SELECT true FROM post_votes WHERE post_id = p.id AND user_id = %d)", user.ID)
-			}
-			
-			err := trx.Select(&dbPosts, fmt.Sprintf(`
-				SELECT p.id, p.number, p.title, p.slug, p.description, p.created_at,
-					   p.votes_count, p.comments_count, p.status,
-					   u.id as user_id, u.name as user_name, u.email as user_email, u.role as user_role,
-					   u.avatar_type, u.avatar_blob_key,
-					   CASE WHEN %s IS NOT NULL THEN true ELSE false END as has_voted,
-					   ARRAY_REMOVE(ARRAY_AGG(t.slug), NULL) as tags
-				FROM roadmap_post_assignments rpa
-				INNER JOIN posts p ON p.id = rpa.post_id
-				INNER JOIN users u ON u.id = p.user_id
-				LEFT JOIN post_tags pt ON pt.post_id = p.id
-				LEFT JOIN tags t ON t.id = pt.tag_id
-				WHERE rpa.column_id = $1 AND rpa.tenant_id = $2
-				GROUP BY p.id, p.number, p.title, p.slug, p.description, p.created_at,
-						 p.votes_count, p.comments_count, p.status,
-						 u.id, u.name, u.email, u.role, u.avatar_type, u.avatar_blob_key
-				ORDER BY rpa.position ASC
-			`, hasVotedSubQuery), column.ID, tenant.ID)
-			if err != nil {
+			// Get post IDs for this column, ordered by position
+			var postIDs []int
+			err := trx.Select(&postIDs, `
+				SELECT post_id
+				FROM roadmap_post_assignments
+				WHERE column_id = $1 AND tenant_id = $2
+				ORDER BY position ASC
+			`, column.ID, tenant.ID)
+			if err != nil && err != sql.ErrNoRows {
 				return err
 			}
 
-			posts := make([]*entity.Post, len(dbPosts))
-			for j, dbPost := range dbPosts {
-				posts[j] = dbPost.toModel(ctx)
+			// Get post details for each post ID
+			for _, postID := range postIDs {
+				post := &entity.Post{}
+				err := trx.Get(post, `
+					SELECT id, number, title, slug, description, created_at, status, votes_count, comments_count
+					FROM posts
+					WHERE id = $1
+				`, postID)
+				if err != nil {
+					if err == sql.ErrNoRows {
+						continue
+					}
+					return err
+				}
+				column.Posts = append(column.Posts, post)
 			}
-			column.Posts = posts
 		}
 
 		q.Result = columns
