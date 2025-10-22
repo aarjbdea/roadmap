@@ -19,7 +19,7 @@ export const RoadmapColumn = (props: RoadmapColumnProps) => {
       <div className="c-roadmap-column__header">
         <h3 className="c-roadmap-column__title">{column.name}</h3>
       </div>
-      
+
       <div className="c-roadmap-column__posts">
         {column.posts && column.posts.length > 0 ? (
           column.posts.map((post, index) => (
@@ -29,7 +29,9 @@ export const RoadmapColumn = (props: RoadmapColumnProps) => {
               columnId={column.id}
               position={index}
               isStaff={isStaff}
-              onMoved={(postNumber, toColumnId, newPosition) => onPostMoved(postNumber, column.id, toColumnId, newPosition)}
+              onMoved={(postNumber, toColumnId, newPosition) =>
+                onPostMoved(postNumber, column.id, toColumnId, newPosition)
+              }
               onRemoved={onPostRemoved}
             />
           ))

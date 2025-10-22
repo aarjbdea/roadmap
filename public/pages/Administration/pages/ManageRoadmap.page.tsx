@@ -8,10 +8,6 @@ import { i18n } from "@lingui/core"
 import { Trans } from "@lingui/react/macro"
 import { AdminBasePage } from "../components/AdminBasePage"
 
-export interface ManageRoadmapPageProps {
-  // No props needed for this page
-}
-
 export interface ManageRoadmapPageState {
   columns: RoadmapColumn[]
   loading: boolean
@@ -22,7 +18,7 @@ export interface ManageRoadmapPageState {
   newColumnPublic: boolean
 }
 
-const ManageRoadmapPage = (_props: ManageRoadmapPageProps) => {
+const ManageRoadmapPage = () => {
   const [state, setState] = useState<ManageRoadmapPageState>({
     columns: [],
     loading: true,

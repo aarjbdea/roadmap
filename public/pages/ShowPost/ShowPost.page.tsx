@@ -238,9 +238,9 @@ export default function ShowPostPage(props: ShowPostPageProps) {
                 {Fider.session.isAuthenticated && Fider.session.user.isCollaborator && (
                   <ResponseModal onCloseModal={() => setShowResponseModal(false)} showModal={showResponseModal} post={props.post} />
                 )}
-                <AssignToRoadmapModal 
-                  post={props.post} 
-                  isOpen={showRoadmapModal} 
+                <AssignToRoadmapModal
+                  post={props.post}
+                  isOpen={showRoadmapModal}
                   onClose={() => setShowRoadmapModal(false)}
                   onAssigned={handleRoadmapAssigned}
                 />

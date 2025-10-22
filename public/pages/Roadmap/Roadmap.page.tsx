@@ -9,17 +9,13 @@ import { RoadmapColumn as RoadmapColumnComponent } from "./components/RoadmapCol
 import { i18n } from "@lingui/core"
 import { Trans } from "@lingui/react/macro"
 
-export interface RoadmapPageProps {
-  // No props needed for this page
-}
-
 export interface RoadmapPageState {
   loading: boolean
   roadmapData?: RoadmapData
   error?: string
 }
 
-const RoadmapPage = (_props: RoadmapPageProps) => {
+const RoadmapPage = () => {
   const fider = useFider()
   const [state, setState] = useState<RoadmapPageState>({
     loading: true,
@@ -42,7 +38,12 @@ const RoadmapPage = (_props: RoadmapPageProps) => {
     }
   }
 
-  const handlePostMoved = async (postNumber: number, fromColumnId: number, toColumnId: number, newPosition: number) => {
+  const handlePostMoved = async (
+    postNumber: number,
+    fromColumnId: number,
+    toColumnId: number,
+    newPosition: number
+  ) => {
     try {
       await roadmap.assignPostToColumn(postNumber, toColumnId, newPosition)
       // Reload roadmap to get updated data
@@ -92,14 +93,22 @@ const RoadmapPage = (_props: RoadmapPageProps) => {
             <Trans id="roadmap.title">Roadmap</Trans>
           </h1>
           <p className="text-muted mt-2">
-            <Trans id="roadmap.description">Track the progress of feature requests and see what&apos;s coming next.</Trans>
+            <Trans id="roadmap.description">
+              Track the progress of feature requests and see what&apos;s coming next.
+            </Trans>
           </p>
         </div>
 
         <div className="p-roadmap__columns">
           <div className="c-roadmap-columns">
             {state.roadmapData.columns.map((column) => (
-              <RoadmapColumnComponent key={column.id} column={column} isStaff={isStaff} onPostMoved={handlePostMoved} onPostRemoved={handlePostRemoved} />
+              <RoadmapColumnComponent
+                key={column.id}
+                column={column}
+                isStaff={isStaff}
+                onPostMoved={handlePostMoved}
+                onPostRemoved={handlePostRemoved}
+              />
             ))}
           </div>
         </div>
