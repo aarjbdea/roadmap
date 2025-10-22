@@ -1,7 +1,7 @@
 import "./Roadmap.page.scss"
 
 import React, { useEffect, useState } from "react"
-import { RoadmapData, RoadmapColumn } from "@fider/models"
+import { RoadmapData } from "@fider/models"
 import { Loader, Message } from "@fider/components"
 import { roadmap } from "@fider/services"
 import { useFider } from "@fider/hooks"
@@ -75,14 +75,14 @@ const RoadmapPage = (_props: RoadmapPageProps) => {
   if (!state.roadmapData || state.roadmapData.columns.length === 0) {
     return (
       <div className="text-center p-8">
-        <Message type="info">
+        <Message type="warning">
           <Trans id="roadmap.empty">No roadmap columns have been configured yet.</Trans>
         </Message>
       </div>
     )
   }
 
-  const isStaff = fider.session.isAuthenticated && fider.session.user.isCollaborator()
+  const isStaff = fider.session.isAuthenticated && fider.session.user.isCollaborator
 
   return (
     <div id="p-roadmap" className="page">

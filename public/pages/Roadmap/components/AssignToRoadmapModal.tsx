@@ -2,9 +2,8 @@ import "./AssignToRoadmapModal.scss"
 
 import React, { useState, useEffect } from "react"
 import { RoadmapColumn, Post } from "@fider/models"
-import { Modal, Button, Select, Message } from "@fider/components"
+import { Modal, Button, Select, SelectOption, Message } from "@fider/components"
 import { roadmap } from "@fider/services"
-import { useFider } from "@fider/hooks"
 import { i18n } from "@lingui/core"
 import { Trans } from "@lingui/react/macro"
 
@@ -17,7 +16,6 @@ interface AssignToRoadmapModalProps {
 
 export const AssignToRoadmapModal = (props: AssignToRoadmapModalProps) => {
   const { post, isOpen, onClose, onAssigned } = props
-  const fider = useFider()
   const [columns, setColumns] = useState<RoadmapColumn[]>([])
   const [selectedColumnId, setSelectedColumnId] = useState<number>(0)
   const [loading, setLoading] = useState(false)
@@ -101,8 +99,8 @@ export const AssignToRoadmapModal = (props: AssignToRoadmapModalProps) => {
             field="column"
             label={i18n._({ id: "roadmap.modal.column.label", message: "Roadmap Column" })}
             options={columnOptions}
-            value={selectedColumnId.toString()}
-            onChange={(value) => setSelectedColumnId(parseInt(value))}
+            value={selectedColumnId > 0 ? selectedColumnId.toString() : undefined}
+            onChange={(option: SelectOption | undefined) => setSelectedColumnId(option ? parseInt(option.value) : 0)}
             placeholder={i18n._({ id: "roadmap.modal.column.placeholder", message: "Select a column..." })}
           />
         </div>

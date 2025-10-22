@@ -1,7 +1,7 @@
 import "./RoadmapPostCard.scss"
 
 import React from "react"
-import { Post } from "@fider/models"
+import { Post, PostStatus } from "@fider/models"
 import { VoteCounter, ShowTag, ShowPostStatus } from "@fider/components"
 import { navigator } from "@fider/services"
 
@@ -56,13 +56,13 @@ export const RoadmapPostCard = (props: RoadmapPostCardProps) => {
       <div className="c-roadmap-post-card__footer">
         <div className="c-roadmap-post-card__meta">
           <VoteCounter post={post} />
-          <ShowPostStatus status={post.status} />
+          <ShowPostStatus status={PostStatus.Get(post.status)} />
         </div>
         
       {post.tags && post.tags.length > 0 && (
         <div className="c-roadmap-post-card__tags">
-          {post.tags.slice(0, 2).map((tag) => (
-            <ShowTag key={tag} tag={tag} />
+          {post.tags.slice(0, 2).map((tagSlug: string) => (
+            <ShowTag key={tagSlug} tag={{ name: tagSlug, slug: tagSlug, color: "" }} />
           ))}
           {post.tags.length > 2 && <span className="c-roadmap-post-card__more-tags">+{post.tags.length - 2}</span>}
         </div>

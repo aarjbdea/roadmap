@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react"
 import { RoadmapColumn } from "@fider/models"
 import { Button, Input, Message, Modal, Toggle } from "@fider/components"
 import { roadmap } from "@fider/services"
-import { useFider } from "@fider/hooks"
 import { i18n } from "@lingui/core"
 import { Trans } from "@lingui/react/macro"
 import { AdminBasePage } from "../components/AdminBasePage"
@@ -101,18 +100,6 @@ const ManageRoadmapPage = (_props: ManageRoadmapPageProps) => {
       setState((prev) => ({
         ...prev,
         error: i18n._({ id: "admin.roadmap.error.deleting", message: "Failed to delete roadmap column" }),
-      }))
-    }
-  }
-
-  const handleReorderColumns = async (_columnIds: number[]) => {
-    try {
-      // TODO: Implement reordering functionality
-      await loadColumns()
-    } catch (error) {
-      setState((prev) => ({
-        ...prev,
-        error: i18n._({ id: "admin.roadmap.error.reordering", message: "Failed to reorder roadmap columns" }),
       }))
     }
   }
@@ -217,8 +204,8 @@ const ManageRoadmapPage = (_props: ManageRoadmapPageProps) => {
               <Toggle
                 field="public"
                 label={i18n._({ id: "admin.roadmap.create.public.label", message: "Visible to public" })}
-                checked={state.newColumnPublic}
-                onChange={(checked) => setState((prev) => ({ ...prev, newColumnPublic: checked }))}
+                defaultValue={state.newColumnPublic}
+                onChange={(value) => setState((prev) => ({ ...prev, newColumnPublic: value }))}
               />
               <p className="text-sm text-muted mt-1">
                 <Trans id="admin.roadmap.create.public.help">Public columns are visible to all users. Private columns are only visible to staff members.</Trans>
@@ -282,7 +269,7 @@ const EditColumnModal = (props: EditColumnModalProps) => {
           <Toggle
             field="public"
             label={i18n._({ id: "admin.roadmap.edit.public.label", message: "Visible to public" })}
-            checked={isPublic}
+            defaultValue={isPublic}
             onChange={setIsPublic}
           />
         </div>
