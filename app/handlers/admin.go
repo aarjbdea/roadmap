@@ -104,16 +104,6 @@ func UpdateAdvancedSettings() web.HandlerFunc {
 	}
 }
 
-// ManageRoadmapSettings is the page used by administrators to manage roadmap columns
-func ManageRoadmapSettings() web.HandlerFunc {
-	return func(c *web.Context) error {
-		return c.Page(http.StatusOK, web.Props{
-			Page:  "Administration/pages/ManageRoadmap.page",
-			Title: "Roadmap · Site Settings",
-		})
-	}
-}
-
 // UpdatePrivacySettings update current tenant's privacy settings
 func UpdatePrivacySettings() web.HandlerFunc {
 	return func(c *web.Context) error {
@@ -134,16 +124,6 @@ func UpdatePrivacySettings() web.HandlerFunc {
 	}
 }
 
-// ManageRoadmapSettings is the page used by administrators to manage roadmap columns
-func ManageRoadmapSettings() web.HandlerFunc {
-	return func(c *web.Context) error {
-		return c.Page(http.StatusOK, web.Props{
-			Page:  "Administration/pages/ManageRoadmap.page",
-			Title: "Roadmap · Site Settings",
-		})
-	}
-}
-
 // UpdateEmailAuthAllowed update current tenant's allow email auth settings
 func UpdateEmailAuthAllowed() web.HandlerFunc {
 	return func(c *web.Context) error {
@@ -160,16 +140,6 @@ func UpdateEmailAuthAllowed() web.HandlerFunc {
 		}
 
 		return c.Ok(web.Map{})
-	}
-}
-
-// ManageRoadmapSettings is the page used by administrators to manage roadmap columns
-func ManageRoadmapSettings() web.HandlerFunc {
-	return func(c *web.Context) error {
-		return c.Page(http.StatusOK, web.Props{
-			Page:  "Administration/pages/ManageRoadmap.page",
-			Title: "Roadmap · Site Settings",
-		})
 	}
 }
 
@@ -266,15 +236,5 @@ func SaveOAuthConfig() web.HandlerFunc {
 		}
 
 		return c.Ok(web.Map{})
-	}
-}
-
-// ManageRoadmapSettings is the page used by administrators to manage roadmap columns
-func ManageRoadmapSettings() web.HandlerFunc {
-	return func(c *web.Context) error {
-		return c.Page(http.StatusOK, web.Props{
-			Page:  "Administration/pages/ManageRoadmap.page",
-			Title: "Roadmap · Site Settings",
-		})
 	}
 }

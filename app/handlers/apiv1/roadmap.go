@@ -29,7 +29,7 @@ func GetRoadmap() web.HandlerFunc {
 // AssignPostToColumn assigns a post to a roadmap column
 func AssignPostToColumn() web.HandlerFunc {
 	return func(c *web.Context) error {
-		action := new(actions.AssignPostToRoadmapColumn)
+		action := new(actions.AssignPostToRoadmap)
 		if result := c.BindTo(action); !result.Ok {
 			return c.HandleValidation(result)
 		}
@@ -47,7 +47,7 @@ func AssignPostToColumn() web.HandlerFunc {
 // ReorderPostInColumn reorders a post within its column
 func ReorderPostInColumn() web.HandlerFunc {
 	return func(c *web.Context) error {
-		action := new(actions.ReorderRoadmapPost)
+		action := new(actions.ReorderPostInRoadmap)
 		if result := c.BindTo(action); !result.Ok {
 			return c.HandleValidation(result)
 		}
@@ -65,17 +65,15 @@ func ReorderPostInColumn() web.HandlerFunc {
 // RemovePostFromRoadmap removes a post from the roadmap
 func RemovePostFromRoadmap() web.HandlerFunc {
 	return func(c *web.Context) error {
-		postNumber := c.ParamAsInt("number")
-		if postNumber <= 0 {
+		postNumber, err := c.ParamAsInt("number")
+		if err != nil || postNumber <= 0 {
 			return c.BadRequest(web.Map{
 				"error": "Invalid post number",
 			})
 		}
 
 		removeCmd := &cmd.RemovePostFromRoadmap{
-			PostID:       postNumber,
-			TenantID:     c.Tenant().ID,
-			RemovedByID:  c.User().ID,
+			PostID: postNumber,
 		}
 
 		if err := bus.Dispatch(c, removeCmd); err != nil {
@@ -92,7 +90,6 @@ func RemovePostFromRoadmap() web.HandlerFunc {
 func GetRoadmapColumns() web.HandlerFunc {
 	return func(c *web.Context) error {
 		getColumns := &query.GetRoadmapColumns{
-			TenantID:       c.Tenant().ID,
 			IncludePrivate: true,
 		}
 
@@ -107,7 +104,7 @@ func GetRoadmapColumns() web.HandlerFunc {
 // CreateRoadmapColumn creates a new roadmap column
 func CreateRoadmapColumn() web.HandlerFunc {
 	return func(c *web.Context) error {
-		action := new(actions.ManageRoadmapColumn)
+		action := new(actions.CreateRoadmapColumn)
 		if result := c.BindTo(action); !result.Ok {
 			return c.HandleValidation(result)
 		}
@@ -125,15 +122,15 @@ func CreateRoadmapColumn() web.HandlerFunc {
 // UpdateRoadmapColumn updates an existing roadmap column
 func UpdateRoadmapColumn() web.HandlerFunc {
 	return func(c *web.Context) error {
-		columnID := c.ParamAsInt("id")
-		if columnID <= 0 {
+		columnID, err := c.ParamAsInt("id")
+		if err != nil || columnID <= 0 {
 			return c.BadRequest(web.Map{
 				"error": "Invalid column ID",
 			})
 		}
 
-		action := new(actions.ManageRoadmapColumn)
-		action.ID = columnID
+		action := new(actions.UpdateRoadmapColumn)
+		action.ColumnID = columnID
 		if result := c.BindTo(action); !result.Ok {
 			return c.HandleValidation(result)
 		}
@@ -151,17 +148,15 @@ func UpdateRoadmapColumn() web.HandlerFunc {
 // DeleteRoadmapColumn deletes a roadmap column
 func DeleteRoadmapColumn() web.HandlerFunc {
 	return func(c *web.Context) error {
-		columnID := c.ParamAsInt("id")
-		if columnID <= 0 {
+		columnID, err := c.ParamAsInt("id")
+		if err != nil || columnID <= 0 {
 			return c.BadRequest(web.Map{
 				"error": "Invalid column ID",
 			})
 		}
 
 		deleteCmd := &cmd.DeleteRoadmapColumn{
-			ColumnID:    columnID,
-			TenantID:    c.Tenant().ID,
-			DeletedByID: c.User().ID,
+			ColumnID: columnID,
 		}
 
 		if err := bus.Dispatch(c, deleteCmd); err != nil {
@@ -177,20 +172,12 @@ func DeleteRoadmapColumn() web.HandlerFunc {
 // ReorderColumns reorders roadmap columns
 func ReorderColumns() web.HandlerFunc {
 	return func(c *web.Context) error {
-		var columnIDs []int
-		if err := c.BindJSON(&columnIDs); err != nil {
-			return c.BadRequest(web.Map{
-				"error": "Invalid column IDs",
-			})
+		action := new(actions.ReorderRoadmapColumns)
+		if result := c.BindTo(action); !result.Ok {
+			return c.HandleValidation(result)
 		}
 
-		reorderCmd := &cmd.ReorderRoadmapColumns{
-			TenantID:    c.Tenant().ID,
-			ColumnIDs:   columnIDs,
-			UpdatedByID: c.User().ID,
-		}
-
-		if err := bus.Dispatch(c, reorderCmd); err != nil {
+		if err := bus.Dispatch(c, action); err != nil {
 			return c.Failure(err)
 		}
 

@@ -62,13 +62,17 @@ func (r *dbRoadmapAssignment) toModel() *entity.RoadmapAssignment {
 func GetRoadmapColumns(ctx context.Context, q *query.GetRoadmapColumns) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
 		dbColumns := make([]*dbRoadmapColumn, 0)
-		err := trx.GetAll(&dbColumns, `
+		query := `
 			SELECT id, tenant_id, name, slug, position, is_visible_to_public, created_at
 			FROM roadmap_columns
 			WHERE tenant_id = $1
-			`+dbx.If(q.IncludePrivate, "", "AND is_visible_to_public = true")+`
-			ORDER BY position ASC
-		`, tenant.ID)
+		`
+		if !q.IncludePrivate {
+			query += " AND is_visible_to_public = true"
+		}
+		query += " ORDER BY position ASC"
+		
+		err := trx.Select(&dbColumns, query, tenant.ID)
 		if err != nil {
 			return err
 		}
@@ -87,13 +91,17 @@ func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
 		// First get all columns
 		dbColumns := make([]*dbRoadmapColumn, 0)
-		err := trx.GetAll(&dbColumns, `
+		query := `
 			SELECT id, tenant_id, name, slug, position, is_visible_to_public, created_at
 			FROM roadmap_columns
 			WHERE tenant_id = $1
-			`+dbx.If(q.IncludePrivate, "", "AND is_visible_to_public = true")+`
-			ORDER BY position ASC
-		`, tenant.ID)
+		`
+		if !q.IncludePrivate {
+			query += " AND is_visible_to_public = true"
+		}
+		query += " ORDER BY position ASC"
+		
+		err := trx.Select(&dbColumns, query, tenant.ID)
 		if err != nil {
 			return err
 		}
@@ -111,7 +119,7 @@ func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 				hasVotedSubQuery = fmt.Sprintf("(SELECT true FROM post_votes WHERE post_id = p.id AND user_id = %d)", user.ID)
 			}
 			
-			err := trx.GetAll(&dbPosts, fmt.Sprintf(`
+			err := trx.Select(&dbPosts, fmt.Sprintf(`
 				SELECT p.id, p.number, p.title, p.slug, p.description, p.created_at,
 					   p.votes_count, p.comments_count, p.status,
 					   u.id as user_id, u.name as user_name, u.email as user_email, u.role as user_role,
@@ -149,7 +157,7 @@ func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 func GetPostRoadmapAssignment(ctx context.Context, q *query.GetPostRoadmapAssignment) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
 		assignment := &dbRoadmapAssignment{}
-		err := trx.GetFirst(assignment, `
+		err := trx.Get(assignment, `
 			SELECT id, post_id, column_id, tenant_id, position, assigned_at, assigned_by_id
 			FROM roadmap_post_assignments
 			WHERE post_id = $1 AND tenant_id = $2
@@ -170,7 +178,7 @@ func GetPostRoadmapAssignment(ctx context.Context, q *query.GetPostRoadmapAssign
 func AssignPostToColumn(ctx context.Context, c *cmd.AssignPostToColumn) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
 		// First remove any existing assignment
-		_, err := trx.Exec(`
+		_, err := trx.Execute(`
 			DELETE FROM roadmap_post_assignments
 			WHERE post_id = $1 AND tenant_id = $2
 		`, c.PostID, tenant.ID)
@@ -188,7 +196,7 @@ func AssignPostToColumn(ctx context.Context, c *cmd.AssignPostToColumn) error {
 			AssignedByID: c.AssignedByID,
 		}
 
-		err = trx.GetFirst(assignment, `
+		err = trx.Get(assignment, `
 			INSERT INTO roadmap_post_assignments (post_id, column_id, tenant_id, position, assigned_at, assigned_by_id)
 			VALUES ($1, $2, $3, $4, $5, $6)
 			RETURNING id
@@ -205,7 +213,7 @@ func AssignPostToColumn(ctx context.Context, c *cmd.AssignPostToColumn) error {
 // RemovePostFromRoadmap removes a post from the roadmap
 func RemovePostFromRoadmap(ctx context.Context, c *cmd.RemovePostFromRoadmap) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
-		_, err := trx.Exec(`
+		_, err := trx.Execute(`
 			DELETE FROM roadmap_post_assignments
 			WHERE post_id = $1 AND tenant_id = $2
 		`, c.PostID, tenant.ID)
@@ -216,7 +224,7 @@ func RemovePostFromRoadmap(ctx context.Context, c *cmd.RemovePostFromRoadmap) er
 // ReorderPostInColumn changes the position of a post within its column
 func ReorderPostInColumn(ctx context.Context, c *cmd.ReorderPostInColumn) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
-		_, err := trx.Exec(`
+		_, err := trx.Execute(`
 			UPDATE roadmap_post_assignments
 			SET position = $1
 			WHERE post_id = $2
@@ -237,7 +245,7 @@ func CreateRoadmapColumn(ctx context.Context, c *cmd.CreateRoadmapColumn) error 
 			CreatedAt:         time.Now(),
 		}
 
-		err := trx.GetFirst(column, `
+		err := trx.Get(column, `
 			INSERT INTO roadmap_columns (tenant_id, name, slug, position, is_visible_to_public, created_at)
 			VALUES ($1, $2, $3, $4, $5, $6)
 			RETURNING id
@@ -255,7 +263,7 @@ func CreateRoadmapColumn(ctx context.Context, c *cmd.CreateRoadmapColumn) error 
 func UpdateRoadmapColumn(ctx context.Context, c *cmd.UpdateRoadmapColumn) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
 		column := &dbRoadmapColumn{}
-		err := trx.GetFirst(column, `
+		err := trx.Get(column, `
 			UPDATE roadmap_columns 
 			SET name = $1, is_visible_to_public = $2
 			WHERE id = $3 AND tenant_id = $4
@@ -274,7 +282,7 @@ func UpdateRoadmapColumn(ctx context.Context, c *cmd.UpdateRoadmapColumn) error 
 func DeleteRoadmapColumn(ctx context.Context, c *cmd.DeleteRoadmapColumn) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
 		// First remove all assignments to this column
-		_, err := trx.Exec(`
+		_, err := trx.Execute(`
 			DELETE FROM roadmap_post_assignments 
 			WHERE column_id = $1 AND tenant_id = $2
 		`, c.ColumnID, tenant.ID)
@@ -283,7 +291,7 @@ func DeleteRoadmapColumn(ctx context.Context, c *cmd.DeleteRoadmapColumn) error 
 		}
 
 		// Then delete the column
-		_, err = trx.Exec(`
+		_, err = trx.Execute(`
 			DELETE FROM roadmap_columns 
 			WHERE id = $1 AND tenant_id = $2
 		`, c.ColumnID, tenant.ID)
@@ -295,7 +303,7 @@ func DeleteRoadmapColumn(ctx context.Context, c *cmd.DeleteRoadmapColumn) error 
 func ReorderRoadmapColumns(ctx context.Context, c *cmd.ReorderRoadmapColumns) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
 		for i, columnID := range c.ColumnIDs {
-			_, err := trx.Exec(`
+			_, err := trx.Execute(`
 				UPDATE roadmap_columns
 				SET position = $1
 				WHERE id = $2 AND tenant_id = $3
@@ -312,7 +320,7 @@ func ReorderRoadmapColumns(ctx context.Context, c *cmd.ReorderRoadmapColumns) er
 func GetMaxRoadmapColumnPosition(ctx context.Context, q *query.GetMaxRoadmapColumnPosition) error {
 	return using(ctx, func(trx *dbx.Trx, tenant *entity.Tenant, user *entity.User) error {
 		var maxPos int
-		err := trx.GetFirst(&maxPos, `
+		err := trx.Scalar(&maxPos, `
 			SELECT COALESCE(MAX(position), 0)
 			FROM roadmap_columns
 			WHERE tenant_id = $1
