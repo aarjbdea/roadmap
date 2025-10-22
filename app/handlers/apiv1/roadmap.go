@@ -22,7 +22,9 @@ func GetRoadmap() web.HandlerFunc {
 			return c.Failure(err)
 		}
 
-		return c.Ok(getRoadmap.Result)
+		return c.Ok(web.Map{
+			"columns": getRoadmap.Result,
+		})
 	}
 }
 
