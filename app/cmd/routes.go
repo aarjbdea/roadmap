@@ -127,6 +127,7 @@ func routes(r *web.Engine) *web.Engine {
 	r.Use(middlewares.CheckTenantPrivacy())
 
 	r.Get("/", handlers.Index())
+	r.Get("/roadmap", handlers.RoadmapPage())
 	r.Get("/posts/:number", handlers.PostDetails())
 	r.Get("/posts/:number/:slug", handlers.PostDetails())
 
@@ -162,6 +163,7 @@ func routes(r *web.Engine) *web.Engine {
 		ui.Get("/admin/members", handlers.ManageMembers())
 		ui.Get("/admin/tags", handlers.ManageTags())
 		ui.Get("/admin/authentication", handlers.ManageAuthentication())
+		ui.Get("/admin/roadmap", handlers.ManageRoadmapSettings())
 		ui.Get("/_api/admin/oauth/:provider", handlers.GetOAuthConfig())
 
 		// From this step, only Administrators are allowed
@@ -192,8 +194,7 @@ func routes(r *web.Engine) *web.Engine {
 		}
 	}
 
-	// Public operations
-	// Does not require authentication
+	// Public API
 	publicApi := r.Group()
 	{
 		publicApi.Get("/api/v1/similarposts", apiv1.FindSimilarPosts())
@@ -203,6 +204,7 @@ func routes(r *web.Engine) *web.Engine {
 		publicApi.Get("/api/v1/posts/:number/comments", apiv1.ListComments())
 		publicApi.Get("/api/v1/posts/:number/comments/:id", apiv1.GetComment())
 		publicApi.Get("/api/v1/taggable-users", apiv1.ListTaggableUsers())
+		publicApi.Get("/api/v1/roadmap", apiv1.GetRoadmap())
 	}
 
 	// Operations used to manage the content of a site
@@ -226,6 +228,9 @@ func routes(r *web.Engine) *web.Engine {
 
 		membersApi.Use(middlewares.IsAuthorized(enum.RoleCollaborator, enum.RoleAdministrator))
 		membersApi.Put("/api/v1/posts/:number/status", apiv1.SetResponse())
+		membersApi.Post("/api/v1/roadmap/posts/:number/assign", apiv1.AssignPostToColumn())
+		membersApi.Put("/api/v1/roadmap/posts/:number/position", apiv1.ReorderPostInColumn())
+		membersApi.Delete("/api/v1/roadmap/posts/:number/assign", apiv1.RemovePostFromRoadmap())
 	}
 
 	// Operations used to manage a site
@@ -261,6 +266,11 @@ func routes(r *web.Engine) *web.Engine {
 
 		adminApi.Use(middlewares.BlockLockedTenants())
 		adminApi.Delete("/api/v1/posts/:number", apiv1.DeletePost())
+		adminApi.Get("/api/v1/admin/roadmap/columns", apiv1.GetRoadmapColumns())
+		adminApi.Post("/api/v1/admin/roadmap/columns", apiv1.CreateRoadmapColumn())
+		adminApi.Put("/api/v1/admin/roadmap/columns/:id", apiv1.UpdateRoadmapColumn())
+		adminApi.Delete("/api/v1/admin/roadmap/columns/:id", apiv1.DeleteRoadmapColumn())
+		adminApi.Put("/api/v1/admin/roadmap/columns/reorder", apiv1.ReorderColumns())
 	}
 
 	return r

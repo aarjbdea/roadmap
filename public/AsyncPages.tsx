@@ -32,3 +32,6 @@ export const AsyncPage = (pageName: string) =>
         `@fider/pages/${pageName}`
       )
   )
+
+// Export specific page components for easier imports
+export const RoadmapPage = AsyncPage("Roadmap/Roadmap.page")

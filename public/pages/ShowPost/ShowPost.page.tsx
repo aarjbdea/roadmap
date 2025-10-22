@@ -14,6 +14,7 @@ import IconChat from "@fider/assets/images/heroicons-chat-alt-2.svg"
 import { ResponseDetails, Button, UserName, Moment, Markdown, Input, Form, Icon, Header, PoweredByFider, Avatar, Dropdown, RSSModal } from "@fider/components"
 import { DiscussionPanel } from "./components/DiscussionPanel"
 import CommentEditor from "@fider/components/common/form/CommentEditor"
+import { AssignToRoadmapModal } from "@fider/pages/Roadmap/components/AssignToRoadmapModal"
 
 import IconX from "@fider/assets/images/heroicons-x.svg"
 import IconThumbsUp from "@fider/assets/images/heroicons-thumbsup.svg"
@@ -52,6 +53,7 @@ export default function ShowPostPage(props: ShowPostPageProps) {
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [isRSSModalOpen, setIsRSSModalOpen] = useState(false)
   const [showResponseModal, setShowResponseModal] = useState(false)
+  const [showRoadmapModal, setShowRoadmapModal] = useState(false)
   const [newTitle, setNewTitle] = useState(props.post.title)
   const [newDescription, setNewDescription] = useState(props.post.description)
   const { attachments, handleImageUploaded, getImageSrc } = useAttachments({
@@ -60,6 +62,11 @@ export default function ShowPostPage(props: ShowPostPageProps) {
   const [highlightedComment, setHighlightedComment] = useState<number | undefined>(undefined)
   const [error, setError] = useState<Failure | undefined>(undefined)
   const fider = useFider()
+
+  const handleRoadmapAssigned = () => {
+    notify.success(<Trans id="showpost.roadmap.assigned">Post assigned to roadmap successfully</Trans>)
+    // Optionally reload the page or update state
+  }
 
   const handleHashChange = useCallback(
     (e?: Event) => {
@@ -194,9 +201,14 @@ export default function ShowPostPage(props: ShowPostPageProps) {
                               <Trans id="action.edit">Edit</Trans>
                             </Dropdown.ListItem>
                             {Fider.session.user.isCollaborator && (
-                              <Dropdown.ListItem onClick={onActionSelected("status")} icon={IconChat}>
-                                <Trans id="action.respond">Respond</Trans>
-                              </Dropdown.ListItem>
+                              <>
+                                <Dropdown.ListItem onClick={onActionSelected("status")} icon={IconChat}>
+                                  <Trans id="action.respond">Respond</Trans>
+                                </Dropdown.ListItem>
+                                <Dropdown.ListItem onClick={() => setShowRoadmapModal(true)}>
+                                  <Trans id="action.assignroadmap">Assign to Roadmap</Trans>
+                                </Dropdown.ListItem>
+                              </>
                             )}
                           </>
                         )}
@@ -226,6 +238,12 @@ export default function ShowPostPage(props: ShowPostPageProps) {
                 {Fider.session.isAuthenticated && Fider.session.user.isCollaborator && (
                   <ResponseModal onCloseModal={() => setShowResponseModal(false)} showModal={showResponseModal} post={props.post} />
                 )}
+                <AssignToRoadmapModal 
+                  post={props.post} 
+                  isOpen={showRoadmapModal} 
+                  onClose={() => setShowRoadmapModal(false)}
+                  onAssigned={handleRoadmapAssigned}
+                />
                 <VStack>
                   {editMode ? (
                     <Form error={error}>

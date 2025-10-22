@@ -1,0 +1,23 @@
+.p-roadmap {
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  &__columns {
+    overflow-x: auto;
+    padding-bottom: 1rem;
+  }
+}
+
+.c-roadmap-columns {
+  display: flex;
+  gap: 1rem;
+  min-width: max-content;
+  padding: 0 0.5rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}

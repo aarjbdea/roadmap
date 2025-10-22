@@ -5,6 +5,7 @@ import { HStack } from "./layout"
 import { Trans } from "@lingui/react/macro"
 import { i18n } from "@lingui/core"
 import IconRss from "@fider/assets/images/heroicons-rss.svg"
+import "./Header.scss"
 
 interface HeaderProps {
   hasInert?: boolean
@@ -36,10 +37,20 @@ export const Header = (props: HeaderProps) => {
       <HStack className="c-menu shadow p-4 w-full">
         <div className="container">
           <HStack justify="between">
-            <a href="/" className="flex flex-x flex-items-center flex--spacing-2 h-8">
-              <TenantLogo size={100} />
-              <h1 className="text-header">{fider.session.tenant.name}</h1>
-            </a>
+            <HStack spacing={4} className="c-header__left">
+              <a href="/" className="flex flex-x flex-items-center flex--spacing-2 h-8">
+                <TenantLogo size={100} />
+                <h1 className="text-header">{fider.session.tenant.name}</h1>
+              </a>
+              <HStack spacing={4} className="c-header__nav">
+                <a href="/" className="c-header__nav-link">
+                  <Trans id="header.nav.home">Home</Trans>
+                </a>
+                <a href="/roadmap" className="c-header__nav-link">
+                  <Trans id="header.nav.roadmap">Roadmap</Trans>
+                </a>
+              </HStack>
+            </HStack>
             {fider.session.isAuthenticated && (
               <HStack spacing={2}>
                 {fider.session.tenant.isFeedEnabled && (
