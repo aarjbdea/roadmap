@@ -186,3 +186,44 @@ func ReorderColumns() web.HandlerFunc {
 		})
 	}
 }
+
+// ManageRoadmapColumn handles both PUT (update) and DELETE operations on a roadmap column
+func ManageRoadmapColumn() web.HandlerFunc {
+	return func(c *web.Context) error {
+		columnID, err := c.ParamAsInt("id")
+		if err != nil || columnID <= 0 {
+			return c.BadRequest(web.Map{
+				"error": "Invalid column ID",
+			})
+		}
+
+		if c.Request.Method == "DELETE" {
+			deleteCmd := &cmd.DeleteRoadmapColumn{
+				ColumnID: columnID,
+			}
+
+			if err := bus.Dispatch(c, deleteCmd); err != nil {
+				return c.Failure(err)
+			}
+
+			return c.Ok(web.Map{
+				"success": true,
+			})
+		}
+
+		// Handle PUT (update)
+		action := new(actions.UpdateRoadmapColumn)
+		action.ColumnID = columnID
+		if result := c.BindTo(action); !result.Ok {
+			return c.HandleValidation(result)
+		}
+
+		if err := bus.Dispatch(c, action); err != nil {
+			return c.Failure(err)
+		}
+
+		return c.Ok(web.Map{
+			"success": true,
+		})
+	}
+}

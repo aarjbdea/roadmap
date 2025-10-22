@@ -310,6 +310,12 @@ func (g *Group) Delete(path string, handler HandlerFunc) {
 	g.engine.mux.Handle("DELETE", path, g.engine.handle(g.middlewares, handler))
 }
 
+// PutDelete handles both HTTP PUT and DELETE requests on the same path
+func (g *Group) PutDelete(path string, handler HandlerFunc) {
+	g.engine.mux.Handle("PUT", path, g.engine.handle(g.middlewares, handler))
+	g.engine.mux.Handle("DELETE", path, g.engine.handle(g.middlewares, handler))
+}
+
 // Static return files from given folder
 func (g *Group) Static(prefix, root string) {
 	fi, err := os.Stat(env.Path(root))
