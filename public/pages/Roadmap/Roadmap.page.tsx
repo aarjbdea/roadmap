@@ -38,12 +38,7 @@ const RoadmapPage = () => {
     }
   }
 
-  const handlePostMoved = async (
-    postNumber: number,
-    fromColumnId: number,
-    toColumnId: number,
-    newPosition: number
-  ) => {
+  const handlePostMoved = async (postNumber: number, fromColumnId: number, toColumnId: number, newPosition: number) => {
     try {
       await roadmap.assignPostToColumn(postNumber, toColumnId, newPosition)
       // Reload roadmap to get updated data
@@ -93,22 +88,14 @@ const RoadmapPage = () => {
             <Trans id="roadmap.title">Roadmap</Trans>
           </h1>
           <p className="text-muted mt-2">
-            <Trans id="roadmap.description">
-              Track the progress of feature requests and see what&apos;s coming next.
-            </Trans>
+            <Trans id="roadmap.description">Track the progress of feature requests and see what&apos;s coming next.</Trans>
           </p>
         </div>
 
         <div className="p-roadmap__columns">
           <div className="c-roadmap-columns">
             {state.roadmapData.columns.map((column) => (
-              <RoadmapColumnComponent
-                key={column.id}
-                column={column}
-                isStaff={isStaff}
-                onPostMoved={handlePostMoved}
-                onPostRemoved={handlePostRemoved}
-              />
+              <RoadmapColumnComponent key={column.id} column={column} isStaff={isStaff} onPostMoved={handlePostMoved} onPostRemoved={handlePostRemoved} />
             ))}
           </div>
         </div>

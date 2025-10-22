@@ -34,41 +34,27 @@ export const RoadmapPostCard = (props: RoadmapPostCardProps) => {
       <div className="c-roadmap-post-card__header">
         <h4 className="c-roadmap-post-card__title">{post.title}</h4>
         {isStaff && (
-          <button
-            className="c-roadmap-post-card__remove"
-            onClick={handleRemove}
-            title="Remove from roadmap"
-          >
+          <button className="c-roadmap-post-card__remove" onClick={handleRemove} title="Remove from roadmap">
             ×
           </button>
         )}
       </div>
-
       <div className="c-roadmap-post-card__content">
         <p className="c-roadmap-post-card__description">
-          {post.description.length > 100
-            ? `${post.description.substring(0, 100)}...`
-            : post.description}
+          {post.description.length > 100 ? `${post.description.substring(0, 100)}...` : post.description}
         </p>
       </div>
-
       <div className="c-roadmap-post-card__footer">
         <div className="c-roadmap-post-card__meta">
           <VoteCounter post={post} />
           <ShowPostStatus status={PostStatus.Get(post.status)} />
         </div>
-
         {post.tags && post.tags.length > 0 && (
           <div className="c-roadmap-post-card__tags">
             {post.tags.slice(0, 2).map((tagSlug: string, index: number) => (
-              <ShowTag
-                key={tagSlug}
-                tag={{ id: index, name: tagSlug, slug: tagSlug, color: "", isPublic: true }}
-              />
+              <ShowTag key={tagSlug} tag={{ id: index, name: tagSlug, slug: tagSlug, color: "", isPublic: true }} />
             ))}
-            {post.tags.length > 2 && (
-              <span className="c-roadmap-post-card__more-tags">+{post.tags.length - 2}</span>
-            )}
+            {post.tags.length > 2 && <span className="c-roadmap-post-card__more-tags">+{post.tags.length - 2}</span>}
           </div>
         )}
       </div>

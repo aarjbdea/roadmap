@@ -29,9 +29,7 @@ export const RoadmapColumn = (props: RoadmapColumnProps) => {
               columnId={column.id}
               position={index}
               isStaff={isStaff}
-              onMoved={(postNumber, toColumnId, newPosition) =>
-                onPostMoved(postNumber, column.id, toColumnId, newPosition)
-              }
+              onMoved={(postNumber, toColumnId, newPosition) => onPostMoved(postNumber, column.id, toColumnId, newPosition)}
               onRemoved={onPostRemoved}
             />
           ))

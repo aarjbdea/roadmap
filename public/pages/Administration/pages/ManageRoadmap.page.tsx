@@ -178,11 +178,7 @@ const ManageRoadmapPage = () => {
         </div>
 
         {/* Create Column Modal */}
-        <Modal.Window
-          isOpen={state.showCreateModal}
-          onClose={() => setState((prev) => ({ ...prev, showCreateModal: false }))}
-          size="small"
-        >
+        <Modal.Window isOpen={state.showCreateModal} onClose={() => setState((prev) => ({ ...prev, showCreateModal: false }))} size="small">
           <Modal.Header>
             <Trans id="admin.roadmap.create.title">Create New Column</Trans>
           </Modal.Header>
