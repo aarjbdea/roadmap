@@ -29,7 +29,7 @@ export const AsyncPage = (pageName: string) =>
       import(
         /* webpackInclude: /\.page.tsx$/ */
         /* webpackChunkName: "[request]" */
-        `@fider/pages/${pageName}`
+        `./pages/${pageName}`
       )
   )
 
