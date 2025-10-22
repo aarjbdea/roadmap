@@ -32,11 +32,7 @@ export const AssignToRoadmapModal = (props: AssignToRoadmapModalProps) => {
       const roadmapData = await roadmap.getRoadmap()
       setColumns(roadmapData.columns)
     } catch (err) {
-      setError(
-        i18n._(
-          { id: "roadmap.modal.error.loading", message: "Failed to load roadmap columns" }
-        )
-      )
+      setError(i18n._({ id: "roadmap.modal.error.loading", message: "Failed to load roadmap columns" }))
     }
   }
 
@@ -49,11 +45,7 @@ export const AssignToRoadmapModal = (props: AssignToRoadmapModalProps) => {
       onAssigned?.()
       onClose()
     } catch (err) {
-      setError(
-        i18n._(
-          { id: "roadmap.modal.error.assigning", message: "Failed to assign post to roadmap" }
-        )
-      )
+      setError(i18n._({ id: "roadmap.modal.error.assigning", message: "Failed to assign post to roadmap" }))
     } finally {
       setLoading(false)
     }
@@ -67,11 +59,7 @@ export const AssignToRoadmapModal = (props: AssignToRoadmapModalProps) => {
       onAssigned?.()
       onClose()
     } catch (err) {
-      setError(
-        i18n._(
-          { id: "roadmap.modal.error.removing", message: "Failed to remove post from roadmap" }
-        )
-      )
+      setError(i18n._({ id: "roadmap.modal.error.removing", message: "Failed to remove post from roadmap" }))
     } finally {
       setLoading(false)
     }
@@ -108,9 +96,7 @@ export const AssignToRoadmapModal = (props: AssignToRoadmapModalProps) => {
           />
         </div>
         <div className="text-sm text-muted">
-          <Trans id="roadmap.modal.post.info">
-            Post: <strong>{post.title}</strong>
-          </Trans>
+          <Trans id="roadmap.modal.post.info">Post: <strong>{post.title}</strong></Trans>
         </div>
       </Modal.Content>
       <Modal.Footer>

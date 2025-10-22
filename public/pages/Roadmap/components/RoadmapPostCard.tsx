@@ -27,10 +27,7 @@ export const RoadmapPostCard = (props: RoadmapPostCardProps) => {
   }
 
   return (
-    <div
-      className={`c-roadmap-post-card ${isStaff ? "c-roadmap-post-card--draggable" : ""}`}
-      onClick={handleClick}
-    >
+    <div className={`c-roadmap-post-card ${isStaff ? "c-roadmap-post-card--draggable" : ""}`} onClick={handleClick}>
       <div className="c-roadmap-post-card__header">
         <h4 className="c-roadmap-post-card__title">{post.title}</h4>
         {isStaff && (
