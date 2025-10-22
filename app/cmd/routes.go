@@ -268,8 +268,9 @@ func routes(r *web.Engine) *web.Engine {
 		adminApi.Delete("/api/v1/posts/:number", apiv1.DeletePost())
 		adminApi.Get("/api/v1/admin/roadmap/columns", apiv1.GetRoadmapColumns())
 		adminApi.Post("/api/v1/admin/roadmap/columns", apiv1.CreateRoadmapColumn())
+		adminApi.Put("/api/v1/admin/roadmap/columns/:id", apiv1.UpdateRoadmapColumn())
+		adminApi.Delete("/api/v1/admin/roadmap/columns/:id", apiv1.DeleteRoadmapColumn())
 		adminApi.Put("/api/v1/admin/roadmap/columns/reorder", apiv1.ReorderColumns())
-		adminApi.PutDelete("/api/v1/admin/roadmap/columns/:id", apiv1.ManageRoadmapColumn())
 	}
 
 	return r
