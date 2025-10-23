@@ -129,11 +129,21 @@ func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 
 			// Get post details for each post ID
 			for _, postID := range postIDs {
-				post := &entity.Post{}
-				err := trx.Get(post, `
-					SELECT id, number, title, slug, description, created_at, status, votes_count, comments_count
-					FROM posts
-					WHERE id = $1
+				dbPost := &dbPost{}
+				err := trx.Get(dbPost, `
+					SELECT p.id, p.number, p.title, p.slug, p.description, p.created_at, p.status,
+						   p.votes_count, p.comments_count, 
+						   u.id as user_id, u.name as user_name, u.email as user_email, u.role as user_role,
+						   u.avatar_type, u.avatar_blob_key,
+						   ARRAY_REMOVE(ARRAY_AGG(t.slug), NULL) as tags
+					FROM posts p
+					INNER JOIN users u ON u.id = p.user_id
+					LEFT JOIN post_tags pt ON pt.post_id = p.id
+					LEFT JOIN tags t ON t.id = pt.tag_id
+					WHERE p.id = $1
+					GROUP BY p.id, p.number, p.title, p.slug, p.description, p.created_at, p.status,
+							 p.votes_count, p.comments_count,
+							 u.id, u.name, u.email, u.role, u.avatar_type, u.avatar_blob_key
 				`, postID)
 				if err != nil {
 					if err == sql.ErrNoRows {
@@ -141,7 +151,7 @@ func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 					}
 					return err
 				}
-				column.Posts = append(column.Posts, post)
+				column.Posts = append(column.Posts, dbPost.toModel(ctx))
 			}
 		}
 
