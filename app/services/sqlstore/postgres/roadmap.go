@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"time"
 
 	"github.com/getfider/fider/app/actions"
