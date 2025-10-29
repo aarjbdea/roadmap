@@ -123,7 +123,7 @@ func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 				WHERE column_id = $1 AND tenant_id = $2
 				ORDER BY position ASC
 			`, column.ID, tenant.ID)
-			if err != nil && err != sql.ErrNoRows {
+			if err != nil {
 				return err
 			}
 
@@ -132,11 +132,14 @@ func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 				post, err := querySinglePost(ctx, trx, buildPostQuery(user, "p.tenant_id = $1 AND p.id = $2"), tenant.ID, postID)
 				if err != nil {
 					if err == sql.ErrNoRows {
+						// Post might have been deleted, skip it
 						continue
 					}
 					return err
 				}
-				column.Posts = append(column.Posts, post)
+				if post != nil {
+					column.Posts = append(column.Posts, post)
+				}
 			}
 		}
 
