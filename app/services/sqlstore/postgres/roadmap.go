@@ -116,8 +116,7 @@ func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 		// Get posts for each column
 		for _, column := range columns {
 			// Get post IDs for this column, ordered by position
-			var postIDs []int
-			err := trx.Select(&postIDs, `
+			rows, err := trx.Query(`
 				SELECT post_id
 				FROM roadmap_post_assignments
 				WHERE column_id = $1 AND tenant_id = $2
@@ -126,6 +125,17 @@ func GetRoadmapData(ctx context.Context, q *query.GetRoadmapData) error {
 			if err != nil {
 				return err
 			}
+
+			postIDs := make([]int, 0)
+			for rows.Next() {
+				var postID int
+				if err := rows.Scan(&postID); err != nil {
+					rows.Close()
+					return err
+				}
+				postIDs = append(postIDs, postID)
+			}
+			rows.Close()
 
 			// Get post details for each post ID using the existing post query helper
 			for _, postID := range postIDs {
