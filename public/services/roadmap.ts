@@ -9,7 +9,6 @@ export const roadmap = {
 
   async assignPostToColumn(postNumber: number, columnId: number, position: number): Promise<void> {
     await http.post(`/api/v1/roadmap/posts/${postNumber}/assign`, {
-      postNumber,
       columnId,
       position,
     })
@@ -21,7 +20,6 @@ export const roadmap = {
 
   async reorderPostInColumn(postNumber: number, newPosition: number): Promise<void> {
     await http.put(`/api/v1/roadmap/posts/${postNumber}/position`, {
-      postNumber,
       newPosition,
     })
   },

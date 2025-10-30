@@ -31,7 +31,21 @@ func GetRoadmap() web.HandlerFunc {
 // AssignPostToColumn assigns a post to a roadmap column
 func AssignPostToColumn() web.HandlerFunc {
 	return func(c *web.Context) error {
+		postNumber, err := c.ParamAsInt("number")
+		if err != nil || postNumber <= 0 {
+			return c.BadRequest(web.Map{
+				"error": "Invalid post number",
+			})
+		}
+
+		// Get the post by number to get its ID
+		getPost := &query.GetPostByNumber{Number: postNumber}
+		if err := bus.Dispatch(c, getPost); err != nil {
+			return c.Failure(err)
+		}
+
 		action := new(actions.AssignPostToRoadmap)
+		action.PostID = getPost.Result.ID
 		if result := c.BindTo(action); !result.Ok {
 			return c.HandleValidation(result)
 		}
@@ -49,7 +63,21 @@ func AssignPostToColumn() web.HandlerFunc {
 // ReorderPostInColumn reorders a post within its column
 func ReorderPostInColumn() web.HandlerFunc {
 	return func(c *web.Context) error {
+		postNumber, err := c.ParamAsInt("number")
+		if err != nil || postNumber <= 0 {
+			return c.BadRequest(web.Map{
+				"error": "Invalid post number",
+			})
+		}
+
+		// Get the post by number to get its ID
+		getPost := &query.GetPostByNumber{Number: postNumber}
+		if err := bus.Dispatch(c, getPost); err != nil {
+			return c.Failure(err)
+		}
+
 		action := new(actions.ReorderPostInRoadmap)
+		action.PostID = getPost.Result.ID
 		if result := c.BindTo(action); !result.Ok {
 			return c.HandleValidation(result)
 		}
@@ -74,8 +102,14 @@ func RemovePostFromRoadmap() web.HandlerFunc {
 			})
 		}
 
+		// Get the post by number to get its ID
+		getPost := &query.GetPostByNumber{Number: postNumber}
+		if err := bus.Dispatch(c, getPost); err != nil {
+			return c.Failure(err)
+		}
+
 		removeCmd := &cmd.RemovePostFromRoadmap{
-			PostID: postNumber,
+			PostID: getPost.Result.ID,
 		}
 
 		if err := bus.Dispatch(c, removeCmd); err != nil {
